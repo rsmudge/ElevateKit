@@ -7,7 +7,7 @@ Elevate Kit is for Cobalt Strike 3.6 and later.
 https://www.cobaltstrike.com/
 
 Information on Aggressor Script is at: 
-https://www.cobaltstrike.com/aggressor-script/beacon.html
+https://www.cobaltstrike.com/aggressor-script/
 
 Demonstration video: 
 https://www.youtube.com/watch?v=sNKQVchyHDI
