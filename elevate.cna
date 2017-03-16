@@ -1,13 +1,5 @@
 # Integrate several privilege escalation exploits into Cobalt Strike via Aggressor Script
 
-# Load all scripts here to avoid issues doing it in bpowershell_import
-$ms16_032     = script_resource("modules/Invoke-MS16032.ps1");
-$eventvwr     = script_resource("modules/Invoke-EventVwrBypass.ps1");
-$wscript      = script_resource("modules/Invoke-WScriptBypassUAC.ps1");
-$ms15_051_x64 = script_resource("modules/cve-2015-1701.x64.dll");
-$ms15_051_x86 = script_resource("modules/cve-2015-1701.x86.dll");
-$ms16_016     = script_resource("modules/cve-2016-0051.x86.dll");
-
 # Integrate ms16-032
 # Sourced from Empire: https://github.com/adaptivethreat/Empire/tree/master/data/module_source/privesc
 
