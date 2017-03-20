@@ -75,7 +75,7 @@ sub wscript_exploit {
 beacon_exploit_register("uac-wscript", "Bypass UAC with wscript.exe", &wscript_exploit);
 
 # Integrate windows/local/ms15_051_client_copy_image from Metasploit
-# https://github.com/rapid7/metasploit-framework/blob/master/ElevateKit/modules/exploits/windows/local/ms15_051_client_copy_image.rb
+# https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/windows/local/ms15_051_client_copy_image.rb
 
 sub ms15_051_exploit {
 	# acknowledge this command
@@ -110,7 +110,7 @@ sub ms15_051_exploit {
 beacon_exploit_register("ms15-051", "Windows ClientCopyImage Win32k Exploit (CVE 2015-1701)", &ms15_051_exploit);
 
 # Integrate windows/local/ms16_016_webdav from Metasploit
-# https://github.com/rapid7/metasploit-framework/blob/master/ElevateKit/modules/exploits/windows/local/ms16_016_webdav.rb
+# https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/windows/local/ms16_016_webdav.rb
 
 sub ms16_016_exploit {
 	# check if we're on an x64 system and error out.
