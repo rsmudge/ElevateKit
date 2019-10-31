@@ -77,6 +77,12 @@ https://github.com/adaptivethreat/Empire/blob/master/data/module_source/privesc/
 	Author: Matt Nelson (@enigma0x3)
 	License: BSD 3-Clause
 
+uac-schtasks: Bypass UAC with schtasks.exe (via SilentCleanup)
+https://github.com/EmpireProject/Empire/blob/master/data/module_source/privesc/Invoke-EnvBypass.ps1
+
+	Author: Petr Medonos (@PetrMedonos)
+	License: BSD 3-Clause
+
 uac-wscript: Bypass UAC with wscript.exe
 https://github.com/adaptivethreat/Empire/blob/master/data/module_source/privesc/Invoke-WScriptBypassUAC.ps1
 

