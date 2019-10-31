@@ -66,13 +66,13 @@ https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/wind
 	License: BSD 3-Clause
 
 ms16-032: Secondary Logon Handle Privilege Escalation (CVE-2016-099)
-https://github.com/adaptivethreat/Empire/blob/master/data/module_source/privesc/Invoke-MS16032.ps1
+https://github.com/EmpireProject/Empire/blob/master/data/module_source/privesc/Invoke-MS16032.ps1
 
 	Author: Ruben Boonen (@FuzzySec)
 	License: BSD 3-Clause
 
 uac-eventvwr: Bypass UAC with eventvwr.exe
-https://github.com/adaptivethreat/Empire/blob/master/data/module_source/privesc/Invoke-EventVwrBypass.ps1
+https://github.com/EmpireProject/Empire/blob/master/data/module_source/privesc/Invoke-EventVwrBypass.ps1
 
 	Author: Matt Nelson (@enigma0x3)
 	License: BSD 3-Clause
@@ -84,7 +84,7 @@ https://github.com/EmpireProject/Empire/blob/master/data/module_source/privesc/I
 	License: BSD 3-Clause
 
 uac-wscript: Bypass UAC with wscript.exe
-https://github.com/adaptivethreat/Empire/blob/master/data/module_source/privesc/Invoke-WScriptBypassUAC.ps1
+https://github.com/EmpireProject/Empire/blob/master/data/module_source/privesc/Invoke-WScriptBypassUAC.ps1
 
 	Author: @enigma0x3, @harmj0y, Vozzie
 	License: BSD 3-Clause

@@ -60,7 +60,7 @@ sub schtasks_exploit {
 beacon_exploit_register("uac-schtasks", "Bypass UAC with schtasks.exe (via SilentCleanup)", &schtasks_exploit);
 
 # Integrate Matt Nelson's file-less eventvwr.exe Bypass UAC attack
-# Sourced from Empire: https://github.com/adaptivethreat/Empire/tree/master/data/module_source/privesc
+# Sourced from Empire: https://github.com/EmpireProject/Empire/tree/master/data/module_source/privesc
 sub eventvwr_elevator {
 	local('$handle $script $oneliner');
 
@@ -82,7 +82,7 @@ sub eventvwr_elevator {
 beacon_elevator_register("uac-eventvwr", "Bypass UAC with eventvwr.exe", &eventvwr_elevator);
 
 # Integrate wscript.exe Bypass UAC attack
-# Sourced from Empire: https://github.com/adaptivethreat/Empire/tree/master/data/module_source/privesc
+# Sourced from Empire: https://github.com/EmpireProject/Empire/tree/master/data/module_source/privesc
 sub wscript_elevator {
 	local('$handle $script $oneliner');
 
@@ -190,7 +190,7 @@ sub ms16_016_exploit {
 beacon_exploit_register("ms16-016", "mrxdav.sys WebDav Local Privilege Escalation (CVE 2016-0051)", &ms16_016_exploit);
 
 # Integrate ms16-032
-# Sourced from Empire: https://github.com/adaptivethreat/Empire/tree/master/data/module_source/privesc
+# Sourced from Empire: https://github.com/EmpireProject/Empire/tree/master/data/module_source/privesc
 sub ms16_032_elevator {
 	local('$handle $script $oneliner');
 
