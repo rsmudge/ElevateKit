@@ -22,9 +22,18 @@ How to use
 
 3. Interact with a Beacon
 
-4. Type 'elevate' to see the list of available privilege escalation attacks.
+4. The Elevate Kit registers elevators AND privilege escalation exploits.
 
-5. Type 'elevate <exploit name>' to execute an attack
+   An elevator runs a command in an elevated context. Type 'runasadmin' to
+   see a list of available privilege elevators.
+
+   An exploit spawns a payload in an elevated context. Type 'elevate' to
+   see a list of available privilege escalation attacks.
+
+5. Type 'elevate <exploit name>' to spawn a session in an elevated context.
+
+   Use 'runasadmin <elevator> <command>' to run a command in an elevated
+   context.
 
 License (elevate.cna)
 =====<>
