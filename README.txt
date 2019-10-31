@@ -44,6 +44,13 @@ Modules
 =====<>
 The included DLL and .ps1 files are developed by other authors 
 
+ms14-058: TrackPopupMenu Win32k NULL Pointer Dereference (CVE-2014-4113)
+https://github.com/rapid7/metasploit-framework/tree/master/external/source/exploits/cve-2014-4113
+https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/windows/local/ms14_058_track_popup_menu.rb
+
+	Author: Unknown, Juan Vazquez, Spencer McIntyre, OJ Reeves
+	License: BSD 3-Clause
+
 ms15-051: Windows ClientCopyImage Win32k Exploit (CVE 2015-1701)
 https://github.com/rapid7/metasploit-framework/tree/master/external/source/exploits/cve-2015-1701
 https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/windows/local/ms15_051_client_copy_image.rb
