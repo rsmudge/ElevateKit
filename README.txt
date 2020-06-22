@@ -44,6 +44,13 @@ Modules
 =====<>
 The included DLL and .ps1 files are developed by other authors 
 
+cve-2020-0796: SMBv3 Compression Buffer Overflow (SMBGhost) (CVE 2020-0796)
+https://github.com/rapid7/metasploit-framework/tree/master/external/source/exploits/CVE-2020-0796
+https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/windows/local/cve_2020_0796_smbghost.rb
+
+	Author: Daniel García Gutiérrez, Manuel Blanco Parajón, Spencer McIntyre
+	License: Metasploit License (BSD)
+
 ms14-058: TrackPopupMenu Win32k NULL Pointer Dereference (CVE-2014-4113)
 https://github.com/rapid7/metasploit-framework/tree/master/external/source/exploits/cve-2014-4113
 https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/windows/local/ms14_058_track_popup_menu.rb

