@@ -216,7 +216,7 @@ beacon_elevator_register("ms16-032", "Secondary Logon Handle Privilege Escalatio
 sub cve_2020_0796_exploit {
 	local('$stager $winbuild');
 
-	# check if we're on an x64 system and error out.
+	# check if we're on an x64 system and error out if we're not
 	if (!-is64 $1) {
 		berror($1, "cve-2020-0796 exploit is x64 only");
 		return;
